@@ -51,11 +51,11 @@ class AttentionHead(nn.Module):
 class BaseModel(pl.LightningModule):
     def __init__(self, embed_dim) -> None:
         super().__init__()
-       
+        print("Using model 2.2")
         self.initial_ln = nn.LayerNorm(embed_dim)
-        self.lin = nn.Linear(embed_dim, 256)
-        self.attn_head = AttentionHead(256, 1)
-        self.clf_head = nn.Linear(256, 11)
+        self.lin = nn.Linear(embed_dim, 512)
+        self.attn_head = AttentionHead(512, 1)
+        self.clf_head = nn.Linear(512, 11)
         self.kld = nn.KLDivLoss(reduction="batchmean")
         self.lr = 1e-3
 
