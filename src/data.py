@@ -337,11 +337,11 @@ class DataloaderHandler:
         embedding_file = h5py.File(self.embedding_file, "r")
         train_dataset = EmbeddingsLocalizationDataset(embedding_file, split_train_df)
         train_batches = train_dataset.get_batch_indices(4096*4, BATCH_SIZE, extra_toks_per_seq=0)
-        train_dataloader = torch.utils.data.DataLoader(train_dataset, collate_fn=TrainBatchConverter(self.alphabet, self.embed_len), batch_sampler=train_batches)
+        train_dataloader = torch.utils.data.DataLoader(train_dataset, collate_fn=TrainBatchConverter(self.alphabet, self.embed_len), batch_sampler=train_batches, num_workers=self.num_workers)
 
         val_dataset = EmbeddingsLocalizationDataset(embedding_file, split_val_df)
         val_batches = val_dataset.get_batch_indices(4096*4, BATCH_SIZE, extra_toks_per_seq=0)
-        val_dataloader = torch.utils.data.DataLoader(val_dataset, collate_fn=TrainBatchConverter(self.alphabet, self.embed_len), batch_sampler=val_batches)
+        val_dataloader = torch.utils.data.DataLoader(val_dataset, collate_fn=TrainBatchConverter(self.alphabet, self.embed_len), batch_sampler=val_batches, num_workers=self.num_workers)
         return train_dataloader, val_dataloader
 
     def get_partition(self, outer_i):
