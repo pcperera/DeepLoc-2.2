@@ -1,6 +1,6 @@
 data_files/embeddings/*.h5
-models/models_*
-outputs/*
+#models/models_*
+#outputs/*
 src/__pycache__/*
 
 .DS_Store

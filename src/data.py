@@ -303,6 +303,7 @@ class SignalTypeDataset(torch.utils.data.Dataset):
         super().__init__()
         self.X = X
         self.y = y
+        self.num_workers = 16
     
     def __getitem__(self, index: int):
         return torch.tensor(self.X[index]).float(), torch.tensor(self.y[index]).float()
@@ -317,6 +318,7 @@ class DataloaderHandler:
         self.alphabet = alphabet
         self.embedding_file = embedding_file
         self.embed_len = embed_len
+        self.num_workers = 16
 
     def get_train_val_dataloaders(self, outer_i):
         data_df = get_swissprot_df(self.clip_len)
@@ -354,7 +356,7 @@ class DataloaderHandler:
         embedding_file = h5py.File(self.embedding_file, "r")
         test_dataset = EmbeddingsLocalizationDataset(embedding_file, test_df)
         test_batches = test_dataset.get_batch_indices(4096*4, BATCH_SIZE, extra_toks_per_seq=0)
-        test_dataloader = torch.utils.data.DataLoader(test_dataset, collate_fn=TrainBatchConverter(self.alphabet, self.embed_len), batch_sampler=test_batches, num_workers=52)
+        test_dataloader = torch.utils.data.DataLoader(test_dataset, collate_fn=TrainBatchConverter(self.alphabet, self.embed_len), batch_sampler=test_batches, num_workers=self.num_workers)
         return test_dataloader, test_df
 
     def get_partition_dataloader_inner(self, partition_i):
@@ -363,7 +365,7 @@ class DataloaderHandler:
         embedding_file = h5py.File(self.embedding_file, "r")
         test_dataset = EmbeddingsLocalizationDataset(embedding_file, test_df)
         test_batches = test_dataset.get_batch_indices(4096*4, BATCH_SIZE, extra_toks_per_seq=0)
-        test_dataloader = torch.utils.data.DataLoader(test_dataset, collate_fn=TrainBatchConverter(self.alphabet, self.embed_len), batch_sampler=test_batches, num_workers=52)
+        test_dataloader = torch.utils.data.DataLoader(test_dataset, collate_fn=TrainBatchConverter(self.alphabet, self.embed_len), batch_sampler=test_batches, num_workers=self.num_workers)
 
         return test_dataloader, test_df
     
@@ -383,14 +385,14 @@ class DataloaderHandler:
             shuffle=True,
             batch_size=BATCH_SIZE,
             drop_last=True,
-            num_workers=52)
+            num_workers=self.num_workers)
 
         val_dataset = SignalTypeDataset(split_val_X, split_val_y)
         val_dataloader = torch.utils.data.DataLoader(
             val_dataset,
             shuffle=False,
             batch_size=BATCH_SIZE,
-            num_workers=52)
+            num_workers=self.num_workers)
         
         return train_dataloader, val_dataloader
 
