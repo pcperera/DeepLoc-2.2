@@ -153,9 +153,9 @@ pos_weights_annot = torch.tensor([0.23, 0.92, 0.98, 2.63, 5.64, 1.60, 2.37, 1.87
 class SignalTypeMLP(pl.LightningModule):
     def __init__(self):
         super().__init__()
-        self.ln1 = nn.Linear(267, 32)
+        self.ln1 = nn.Linear(139, 32)
         self.ln2 = nn.Linear(32, 9)
-        self.lr = 1e-3
+        self.lr = 0.005
 
     def forward(self, x):
         x = nn.Tanh()(self.ln1(x))
