@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "-m","--model", 
-        default="Fast",
+        default="Accurate",
         choices=['Accurate', 'Fast'],
         type=str,
         help="Model to use."
