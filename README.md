@@ -8,12 +8,14 @@ More details can be found in the paper https://academic.oup.com/nar/article/50/W
 
 ## Directories
 
-| Directory   | Purpose                                 |
-|-------------|-----------------------------------------|
-| models_2.1  | DeepLoc 2.1 reference model and metrics |
-| models_2.2  | DeepLoc 2.2 enhanced model and metrics  |
-| outputs_2.1 | DeepLoc 2.1 reference model output      |
-| outputs_2.2 | DeepLoc 2.2 enhanced model output       |
+| Directory   | Purpose                                     |
+|-------------|---------------------------------------------|
+| models_2.1  | DeepLoc 2.1 reference model and metrics     |
+| models_2.2  | DeepLoc 2.2 enhanced model and metrics      |
+| outputs_2.1 | DeepLoc 2.1 reference model output          |
+| outputs_2.2 | DeepLoc 2.2 enhanced model output           |
+| train_sl.py | Trains subcellular localization  prediction |
+| train_ss.py | Trains sorting signal prediction            |
 
 
 ## Data

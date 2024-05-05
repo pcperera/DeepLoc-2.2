@@ -16,17 +16,18 @@ import json
 def mcc(tp, tn, fp, fn):
     sup = tp * tn - fp * fn
     inf = (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
-    if inf==0:
+    if inf == 0:
         return 0
     else:
         return sup / np.sqrt(inf)
-        
+
+
 def get_best_threshold_mcc(y_true, y_prob):
     idx = np.argsort(y_prob)
     y_true_sort = y_true[idx]
     n = y_true.shape[0]
-    nump = 1.0 * np.sum(y_true) # number of positive
-    numn = n - nump # number of negative
+    nump = 1.0 * np.sum(y_true)  # number of positive
+    numn = n - nump  # number of negative
     tp = nump
     tn = 0.0
     fp = numn
@@ -61,12 +62,13 @@ def get_best_threshold_mcc(y_true, y_prob):
     # plt.plot(mccs)
     return best_proba
 
+
 def get_optimal_threshold(output_df, data_df):
     test_df = data_df.merge(output_df)
-    
+
     predictions = np.stack(test_df["preds"].to_numpy())
     actuals = np.stack(test_df["Target"].to_numpy())
-    
+
     optimal_thresholds = np.zeros((11,))
     for i in range(11):
         fpr, tpr, thresholds = metrics.roc_curve(actuals[:, i], predictions[:, i])
@@ -75,12 +77,13 @@ def get_optimal_threshold(output_df, data_df):
 
     return optimal_thresholds
 
+
 def get_optimal_threshold_pr(output_df, data_df):
     test_df = data_df.merge(output_df)
-    
+
     predictions = np.stack(test_df["preds"].to_numpy())
     actuals = np.stack(test_df["Target"].to_numpy())
-    
+
     optimal_thresholds = np.zeros((11,))
     for i in range(11):
         pr, re, thresholds = metrics.precision_recall_curve(actuals[:, i], predictions[:, i])
@@ -90,28 +93,30 @@ def get_optimal_threshold_pr(output_df, data_df):
 
     return optimal_thresholds
 
+
 def get_optimal_threshold_mcc(output_df, data_df):
     test_df = data_df.merge(output_df)
-    
+
     predictions = np.stack(test_df["preds"].to_numpy())
     actuals = np.stack(test_df["Target"].to_numpy())
-    
+
     optimal_thresholds = np.zeros((11,))
     for i in range(11):
         optimal_thresholds[i] = get_best_threshold_mcc(actuals[:, i], predictions[:, i])
 
     return optimal_thresholds
 
+
 def calculate_sl_metrics_fold(test_df, thresholds):
     print("Computing fold")
     predictions = np.stack(test_df["preds"].to_numpy())
-    outputs = predictions>thresholds
+    outputs = predictions > thresholds
     actuals = np.stack(test_df["Target"].to_numpy())
 
     ypred_membrane = outputs[:, 0]
-    ypred_subloc = outputs[:,1:]
+    ypred_subloc = outputs[:, 1:]
     y_membrane = actuals[:, 0]
-    y_subloc = actuals[:,1:]
+    y_subloc = actuals[:, 1:]
 
     metrics_dict = {}
 
@@ -120,16 +125,17 @@ def calculate_sl_metrics_fold(test_df, thresholds):
     metrics_dict["ACC_membrane"] = (ypred_membrane == y_membrane).mean()
     metrics_dict["MCC_membrane"] = matthews_corrcoef(y_membrane, ypred_membrane)
     metrics_dict["ACC_subloc"] = (np.all((ypred_subloc == y_subloc), axis=1)).mean()
-    metrics_dict["HammLoss_subloc"] = 1-hamming_loss(y_subloc, ypred_subloc)
+    metrics_dict["HammLoss_subloc"] = 1 - hamming_loss(y_subloc, ypred_subloc)
     metrics_dict["Jaccard_subloc"] = jaccard_score(y_subloc, ypred_subloc, average="samples")
     metrics_dict["MicroF1_subloc"] = f1_score(y_subloc, ypred_subloc, average="micro")
     metrics_dict["MacroF1_subloc"] = f1_score(y_subloc, ypred_subloc, average="macro")
     for i in range(10):
-      metrics_dict[f"{CATEGORIES[1+i]}"] = matthews_corrcoef(y_subloc[:,i], ypred_subloc[:,i])
+        metrics_dict[f"{CATEGORIES[1 + i]}"] = matthews_corrcoef(y_subloc[:, i], ypred_subloc[:, i])
 
     # for i in range(10):
     #    metrics_dict[f"{categories[1+i]}"] = roc_auc_score(y_subloc[:,i], predictions[:,i+1])
     return metrics_dict
+
 
 def calculate_sl_metrics(model_attrs: ModelAttributes, datahandler: DataloaderHandler, thresh_type="mcc", inner_i="1Layer"):
     with open(os.path.join(model_attrs.outputs_save_path, f"thresholds_sl_{thresh_type}.pkl"), "rb") as f:
@@ -167,10 +173,11 @@ def calculate_ss_metrics_fold(y_test, y_test_preds, thresh):
     metrics_dict["macroF1"] = f1_score(y_test, y_preds, average="macro")
     metrics_dict["accuracy"] = (np.all((y_preds == y_test), axis=1)).mean()
 
-    for j in range(len(SS_CATEGORIES)-1):
-        metrics_dict[f"{SS_CATEGORIES[j+1]}"]  = matthews_corrcoef(y_preds[:, j],y_test[:, j])
+    for j in range(len(SS_CATEGORIES) - 1):
+        metrics_dict[f"{SS_CATEGORIES[j + 1]}"] = matthews_corrcoef(y_preds[:, j], y_test[:, j])
 
     return metrics_dict
+
 
 def calculate_ss_metrics(model_attrs: ModelAttributes, datahandler: DataloaderHandler, thresh_type="mcc"):
     with open(os.path.join(model_attrs.outputs_save_path, f"thresholds_ss_{thresh_type}.pkl"), "rb") as f:
@@ -178,9 +185,9 @@ def calculate_ss_metrics(model_attrs: ModelAttributes, datahandler: DataloaderHa
     # print(np.array(list(threshold_dict.values())).mean(0))
     metrics_dict_list = {}
     thresh = np.array([threshold_dict[k] for k in SS_CATEGORIES[1:]])
-    
+
     for outer_i in range(5):
-        _,_,_, y_test = datahandler.get_swissprot_ss_xy(model_attrs.outputs_save_path, outer_i)
+        _, _, _, y_test = datahandler.get_swissprot_ss_xy(model_attrs.outputs_save_path, outer_i)
         y_test_preds = pickle.load(open(f"{model_attrs.outputs_save_path}/ss_{outer_i}.pkl", "rb"))
         metrics_dict = calculate_ss_metrics_fold(y_test, y_test_preds, thresh)
         for k in metrics_dict:
