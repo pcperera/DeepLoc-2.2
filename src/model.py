@@ -55,7 +55,7 @@ class BaseModel(pl.LightningModule):
     def __init__(self, embed_dim) -> None:
         super().__init__()
         print("Using model 2.2")
-        hidden_features = 128
+        hidden_features = 288
         attention_heads = 2
         self.initial_ln = nn.LayerNorm(embed_dim)
         self.lin = nn.Linear(embed_dim, hidden_features)
@@ -172,7 +172,7 @@ class SignalTypeMLP(pl.LightningModule):
         grouped_parameters = [
             {"params": [p for n, p in self.named_parameters()], 'lr': self.lr},
         ]
-        optimizer = torch.optim.AdamW(grouped_parameters, lr=self.lr)
+        optimizer = torch.optim.LBFGS(grouped_parameters, lr=self.lr)
         return optimizer
 
     def training_step(self, batch, batch_idx):
