@@ -158,10 +158,15 @@ def calculate_sl_metrics(model_attrs: ModelAttributes, datahandler: DataloaderHa
         output_dict[k] = [f"{round(np.array(metrics_dict_list[k]).mean(), 2):.2f} pm {round(np.array(metrics_dict_list[k]).std(), 2):.2f}"]
 
     print(pd.DataFrame(output_dict).to_latex())
-    for k in metrics_dict_list:
-        print("{0:21s} : {1}".format(k, f"{round(np.array(metrics_dict_list[k]).mean(), 2):.2f} + {round(np.array(metrics_dict_list[k]).std(), 2):.2f}"))
-    for k in metrics_dict_list:
-        print("{0}".format(f"{round(np.array(metrics_dict_list[k]).mean(), 2):.2f} + {round(np.array(metrics_dict_list[k]).std(), 2):.2f}"))
+
+    with open(os.path.join(model_attrs.outputs_save_path, f"metrics_sl_{thresh_type}.txt"), "w") as metrics_sl:
+        for k in metrics_dict_list:
+            metric = "{0:21s} : {1}".format(k, f"{round(np.array(metrics_dict_list[k]).mean(), 2):.2f} + {round(np.array(metrics_dict_list[k]).std(), 2):.2f}\n")
+            print(metric)
+            metrics_sl.writelines(metric)
+        for k in metrics_dict_list:
+            metric = "{0}".format(f"{round(np.array(metrics_dict_list[k]).mean(), 2):.2f} + {round(np.array(metrics_dict_list[k]).std(), 2):.2f}\n")
+            print(metric)
 
 
 def calculate_ss_metrics_fold(y_test, y_test_preds, thresh):

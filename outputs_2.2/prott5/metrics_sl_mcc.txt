@@ -1,0 +1,19 @@
+NumLabels             : 1.27 + 0.03
+NumLabelsTest         : 1.26 + 0.03
+ACC_membrane          : 0.88 + 0.01
+MCC_membrane          : 0.71 + 0.02
+ACC_subloc            : 0.55 + 0.03
+HammLoss_subloc       : 0.93 + 0.01
+Jaccard_subloc        : 0.69 + 0.02
+MicroF1_subloc        : 0.73 + 0.02
+MacroF1_subloc        : 0.67 + 0.01
+Cytoplasm             : 0.63 + 0.01
+Nucleus               : 0.69 + 0.02
+Extracellular         : 0.85 + 0.04
+Cell membrane         : 0.66 + 0.01
+Mitochondrion         : 0.76 + 0.02
+Plastid               : 0.90 + 0.01
+Endoplasmic reticulum : 0.56 + 0.02
+Lysosome/Vacuole      : 0.28 + 0.06
+Golgi apparatus       : 0.35 + 0.04
+Peroxisome            : 0.57 + 0.06
