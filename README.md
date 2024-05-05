@@ -1,10 +1,19 @@
-# DeepLoc 2.0
+# DeepLoc 2.2
 
 Multi-label subcellular localization and sorting signal prediction based on protein foundation models (https://github.com/agemagician/ProtTrans, https://github.com/facebookresearch/esm).
 
 Prediction webserver is available at https://services.healthtech.dtu.dk/services/DeepLoc-2.0/
 
 More details can be found in the paper https://academic.oup.com/nar/article/50/W1/W228/6576357
+
+## Directories
+
+| Directory   | Purpose                                 |
+|-------------|-----------------------------------------|
+| models_2.1  | DeepLoc 2.1 reference model and metrics |
+| models_2.2  | DeepLoc 2.2 enhanced model and metrics  |
+| outputs_2.1 | DeepLoc 2.1 reference model output      |
+| outputs_2.2 | DeepLoc 2.2 enhanced model output       |
 
 
 ## Data
