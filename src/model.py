@@ -52,12 +52,14 @@ class BaseModel(pl.LightningModule):
     def __init__(self, embed_dim) -> None:
         super().__init__()
         print("Using model 2.2")
+        hidden_features = 128
+        attention_heads = 2
         self.initial_ln = nn.LayerNorm(embed_dim)
-        self.lin = nn.Linear(embed_dim, 512)
-        self.attn_head = AttentionHead(512, 1)
-        self.clf_head = nn.Linear(512, 11)
+        self.lin = nn.Linear(embed_dim, hidden_features)
+        self.attn_head = AttentionHead(hidden_features, attention_heads)
+        self.clf_head = nn.Linear(hidden_features, 11)
         self.kld = nn.KLDivLoss(reduction="batchmean")
-        self.lr = 1e-3
+        self.lr = 0.005
 
     def forward(self, embedding, lens, non_mask):
         x = self.initial_ln(embedding)
@@ -151,9 +153,9 @@ pos_weights_annot = torch.tensor([0.23, 0.92, 0.98, 2.63, 5.64, 1.60, 2.37, 1.87
 class SignalTypeMLP(pl.LightningModule):
     def __init__(self):
         super().__init__()
-        self.ln1 = nn.Linear(267, 32)
+        self.ln1 = nn.Linear(139, 32)
         self.ln2 = nn.Linear(32, 9)
-        self.lr = 1e-3
+        self.lr = 0.005
 
     def forward(self, x):
         x = nn.Tanh()(self.ln1(x))
