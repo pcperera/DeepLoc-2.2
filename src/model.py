@@ -55,14 +55,14 @@ class BaseModel(pl.LightningModule):
     def __init__(self, embed_dim) -> None:
         super().__init__()
         print("Using model 2.2")
-        hidden_features = 288
+        hidden_features = 64
         attention_heads = 2
         self.initial_ln = nn.LayerNorm(embed_dim)
         self.lin = nn.Linear(embed_dim, hidden_features)
         self.attn_head = AttentionHead(hidden_features, attention_heads)
         self.clf_head = nn.Linear(hidden_features, 11)
         self.kld = nn.KLDivLoss(reduction="batchmean")
-        self.lr = 0.005
+        self.lr = 0.0001
 
     def forward(self, embedding, lens, non_mask):
         x = self.initial_ln(embedding)
@@ -107,7 +107,7 @@ class BaseModel(pl.LightningModule):
         grouped_parameters = [
             {"params": [p for n, p in self.named_parameters()]}
         ]
-        optimizer = torch.optim.AdamW(grouped_parameters, lr=self.lr)
+        optimizer = torch.optim.RMSprop(grouped_parameters, lr=self.lr)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer, mode="min", factor=0.1, patience=1,
             min_lr=1e-5)
@@ -161,7 +161,7 @@ class SignalTypeMLP(pl.LightningModule):
         super().__init__()
         self.ln1 = nn.Linear(139, 32)
         self.ln2 = nn.Linear(32, 9)
-        self.lr = 0.005
+        self.lr = 0.0001
 
     def forward(self, x):
         x = nn.Tanh()(self.ln1(x))
@@ -172,7 +172,7 @@ class SignalTypeMLP(pl.LightningModule):
         grouped_parameters = [
             {"params": [p for n, p in self.named_parameters()], 'lr': self.lr},
         ]
-        optimizer = torch.optim.LBFGS(grouped_parameters, lr=self.lr)
+        optimizer = torch.optim.RMSprop(grouped_parameters, lr=self.lr)
         return optimizer
 
     def training_step(self, batch, batch_idx):
